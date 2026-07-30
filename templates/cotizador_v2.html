@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SERBI Cotizador</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <header class="encabezado">
+
+        <img src="/static/img/logo.png" class="logo">
+
+        <div>
+
+            <h1>SERBI COTIZADOR</h1>
+
+            <p>Cotizaciones rápidas</p>
+
+        </div>
+
+    </header>
+
+    <div class="buscador">
+
+        <input
+            type="text"
+            id="buscar"
+            autocomplete="off"
+            placeholder="Buscar por código o descripción...">
+
+    </div>
+
+    <div id="resultados" class="resultados">
+
+    </div>
+
+    <div class="carrito">
+
+        <div class="tituloCarrito">
+
+            <h2>🛒 Cotización</h2>
+
+            <button onclick="vaciarCarrito()">
+
+                Vaciar
+
+            </button>
+
+        </div>
+
+        <div id="cotizacion">
+
+            No hay productos agregados.
+
+        </div>
+
+        <div class="total">
+
+            <h2 id="total">
+
+                TOTAL: $0.00
+
+            </h2>
+
+        </div>
+
+        <div class="acciones">
+
+            <button id="btnWhatsapp">
+
+                📱 Enviar WhatsApp
+
+            </button>
+
+            <button id="btnCopiar">
+
+                📋 Copiar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div id="modalProducto" class="modal">
+
+    <div class="modalContenido">
+
+        <h2 id="modalTitulo"></h2>
+
+        <br>
+
+        <label>Cantidad</label>
+
+        <div class="cantidadBox">
+
+            <button id="menos">−</button>
+
+            <input
+                id="cantidadModal"
+                type="number"
+                min="1"
+                value="1">
+
+            <button id="mas">+</button>
+
+        </div>
+
+        <br>
+
+        <label>Precio</label>
+
+        <br><br>
+
+        <label>
+
+            <input type="radio" name="precioModal" value="1" checked>
+
+            Precio 1
+            <span id="precio1txt"></span>
+
+        </label>
+
+        <br><br>
+
+        <label>
+
+            <input type="radio" name="precioModal" value="2">
+
+            Precio 2
+            <span id="precio2txt"></span>
+
+        </label>
+
+        <br><br>
+
+        <label>
+
+            <input type="radio" name="precioModal" value="3">
+
+            Precio 3
+            <span id="precio3txt"></span>
+
+        </label>
+
+        <br><br><br>
+
+        <div class="botonesModal">
+
+            <button id="cancelarModal">
+
+                Cancelar
+
+            </button>
+
+            <button id="agregarModal">
+
+                Agregar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/js/app.js"></script>
+
+</body>
+
+</html>
