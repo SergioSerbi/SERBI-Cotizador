@@ -189,7 +189,7 @@ async function buscarV2(){
     productos.forEach(p=>{
 
         html += `
-        <div class="cardProducto">
+        <div class="producto">
 
             <h3>${p.CLAVE}</h3>
 
