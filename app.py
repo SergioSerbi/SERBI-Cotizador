@@ -3,6 +3,9 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+import os
+from datetime import datetime
+
 from services.buscador import buscar
 
 app = FastAPI(title="SERBI STOCK")
@@ -28,13 +31,20 @@ def inicio(request: Request):
 
     productos = resultados.head(50).to_dict(orient="records")
 
+    archivo_excel = "data/articulosExportados Santa Rosa.xlsx"
+
+    fecha_actualizacion = datetime.fromtimestamp(
+        os.path.getmtime(archivo_excel)
+    ).strftime("%d/%m/%Y %I:%M %p")
+
     return templates.TemplateResponse(
         request=request,
         name="cotizador_v2.html",
         context={
             "request": request,
             "productos": productos,
-            "texto": texto
+            "texto": texto,
+            "fecha_actualizacion": fecha_actualizacion
         }
     )
 
