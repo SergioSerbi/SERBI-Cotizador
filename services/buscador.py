@@ -4,6 +4,9 @@ archivo = "data/articulosExportados Santa Rosa.xlsx"
 
 df = pd.read_excel(archivo)
 
+print(df["PRECIO 1"].head(20))
+print(df["PRECIO 1"].dtype)
+
 
 def buscar(texto):
 
@@ -16,4 +19,3 @@ def buscar(texto):
     ]
 
     return resultados
-print(df.columns.tolist())
