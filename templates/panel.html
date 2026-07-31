@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Panel Administración SERBI</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <header class="encabezado">
+
+        <img src="/static/img/logo.png" class="logo">
+
+        <div>
+
+            <h1>PANEL DE ADMINISTRACIÓN</h1>
+
+            <p>Bienvenido Administrador</p>
+
+        </div>
+
+    </header>
+
+    <div class="carrito">
+
+        <h2>Actualizar Catálogo</h2>
+
+        <br>
+
+        <form
+            action="/upload"
+            method="POST"
+            enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="archivo"
+                accept=".xlsx"
+                required>
+
+            <br><br>
+
+            <button
+                type="submit"
+                style="width:100%;padding:18px;font-size:18px;">
+
+                📤 Actualizar catálogo
+
+            </button>
+
+        </form>
+
+        <br><br>
+
+        <button
+            onclick="location.href='/admin';"
+            style="width:100%;padding:18px;font-size:18px;background:#d9534f;color:white;border:none;border-radius:8px;cursor:pointer;">
+
+            🚪 Cerrar sesión
+
+        </button>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

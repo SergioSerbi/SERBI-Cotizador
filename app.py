@@ -7,9 +7,16 @@ import os
 from datetime import datetime
 
 from services.buscador import buscar
+from routes.admin import router as admin_router
+from routes.upload import router as upload_router
 
 app = FastAPI(title="SERBI STOCK")
 
+# Routers
+app.include_router(admin_router)
+app.include_router(upload_router)
+
+# Archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Administración SERBI</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <header class="encabezado">
+
+        <img src="/static/img/logo.png" class="logo">
+
+        <div>
+
+            <h1>ADMINISTRACIÓN SERBI</h1>
+
+            <p>Acceso de administrador</p>
+
+        </div>
+
+    </header>
+
+    <div class="carrito">
+
+        <h2>Iniciar sesión</h2>
+
+        <br>
+
+        <form method="POST" action="/admin">
+
+            <label>Usuario</label>
+
+            <input
+                type="text"
+                name="usuario"
+                placeholder="Usuario"
+                required>
+
+            <br><br>
+
+            <label>Contraseña</label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Contraseña"
+                required>
+
+            <br><br>
+
+            {% if error %}
+                <p style="color:red;font-weight:bold;">
+                    {{ error }}
+                </p>
+                <br>
+            {% endif %}
+
+            <button type="submit">
+
+                Entrar
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
