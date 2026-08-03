@@ -1,232 +1,246 @@
 // ===========================
-// SERBI COTIZADOR V2
+// SERBI COTIZADOR V2.2
 // ===========================
 
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+let productoPendiente = null;
 
-window.onload = () => {
+const dinero = new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN"
+});
+
+window.addEventListener("DOMContentLoaded", () => {
     dibujarCarrito();
-};
+    configurarModal();
+    configurarBuscador();
+    configurarAcciones();
+});
 
 function guardarCarrito() {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-function agregarProducto(clave, descripcion, precio1, precio2, precio3) {
+function configurarModal() {
+    document.getElementById("menos").addEventListener("click", () => cambiarCantidad(-1));
+    document.getElementById("mas").addEventListener("click", () => cambiarCantidad(1));
+    document.getElementById("cerrarModal").addEventListener("click", cerrarModal);
+    document.getElementById("cancelarModal").addEventListener("click", cerrarModal);
+    document.getElementById("agregarModal").addEventListener("click", confirmarProducto);
+    document.getElementById("modalProducto").addEventListener("click", (evento) => {
+        if (evento.target.id === "modalProducto") cerrarModal();
+    });
+    document.addEventListener("keydown", (evento) => {
+        if (evento.key === "Escape") cerrarModal();
+    });
+}
 
-    let opcion = prompt(
-`¿Qué precio deseas usar?
+function configurarBuscador() {
+    const txtBuscar = document.getElementById("buscar");
+    txtBuscar.addEventListener("input", buscarV2);
+}
 
-1 = $${precio1.toFixed(2)}
-2 = $${precio2.toFixed(2)}
-3 = $${precio3.toFixed(2)}`, "1");
+function configurarAcciones() {
+    document.getElementById("btnCopiar").addEventListener("click", copiarCotizacion);
+    document.getElementById("btnWhatsapp").addEventListener("click", enviarWhatsApp);
+    document.getElementById("btnVaciar").addEventListener("click", vaciarCarrito);
+}
 
-    if (opcion === null) return;
+function abrirModal(producto) {
+    productoPendiente = producto;
+    const preciosDisponibles = producto.precios.filter((precio) => precio.valor > 0);
+    const opcionesPrecio = document.getElementById("opcionesPrecio");
+    const seccionPrecio = document.getElementById("seccionPrecio");
 
-    let precio = Number(precio1);
+    document.getElementById("modalTitulo").textContent = producto.descripcion;
+    document.getElementById("cantidadModal").value = 1;
+    opcionesPrecio.replaceChildren();
 
-    if (opcion == "2") precio = Number(precio2);
-    if (opcion == "3") precio = Number(precio3);
-
-    let cantidad = prompt("Cantidad", "1");
-
-    if (cantidad === null) return;
-
-    cantidad = parseInt(cantidad);
-
-    if (isNaN(cantidad) || cantidad <= 0) {
-        cantidad = 1;
-    }
-
-    carrito.push({
-        clave: clave,
-        descripcion: descripcion,
-        precio: precio,
-        cantidad: cantidad
+    // Cuando solo hay un precio válido, se elige automáticamente.
+    seccionPrecio.hidden = preciosDisponibles.length <= 1;
+    preciosDisponibles.forEach((precio, indice) => {
+        const etiqueta = document.createElement("label");
+        etiqueta.className = "opcionPrecio";
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "precioModal";
+        radio.value = precio.valor;
+        radio.checked = indice === 0;
+        etiqueta.append(radio, document.createTextNode(` ${precio.nombre} `));
+        const importe = document.createElement("strong");
+        importe.textContent = dinero.format(precio.valor);
+        etiqueta.append(importe);
+        opcionesPrecio.append(etiqueta);
     });
 
+    document.getElementById("modalProducto").classList.add("activo");
+    document.getElementById("cantidadModal").focus();
+}
+
+function cerrarModal() {
+    document.getElementById("modalProducto")?.classList.remove("activo");
+    productoPendiente = null;
+}
+
+function cambiarCantidad(cambio) {
+    const campo = document.getElementById("cantidadModal");
+    const actual = Math.max(1, Number.parseInt(campo.value, 10) || 1);
+    campo.value = Math.max(1, actual + cambio);
+}
+
+function confirmarProducto() {
+    if (!productoPendiente) return;
+
+    const cantidad = Math.max(1, Number.parseInt(document.getElementById("cantidadModal").value, 10) || 1);
+    const precioSeleccionado = document.querySelector('input[name="precioModal"]:checked');
+    if (!precioSeleccionado) return;
+
+    const precio = Number(precioSeleccionado.value);
+    const existente = carrito.find((item) => item.clave === productoPendiente.clave && item.precio === precio);
+
+    if (existente) {
+        existente.cantidad += cantidad;
+    } else {
+        carrito.push({
+            clave: productoPendiente.clave,
+            descripcion: productoPendiente.descripcion,
+            precio,
+            cantidad
+        });
+    }
+
+    cerrarModal();
     guardarCarrito();
     dibujarCarrito();
 }
 
 function dibujarCarrito() {
-
     const contenedor = document.getElementById("cotizacion");
+    const total = carrito.reduce((acumulado, producto) => acumulado + producto.precio * producto.cantidad, 0);
+    document.getElementById("total").textContent = `TOTAL: ${dinero.format(total)}`;
 
-    let html = "";
-    let total = 0;
-
-    carrito.forEach((p, index) => {
-
-        let importe = p.precio * p.cantidad;
-        total += importe;
-
-        html += `
-        <div class="itemCotizacion">
-
-            <h3>${p.descripcion}</h3>
-
-            <b>Clave:</b> ${p.clave}<br><br>
-
-            <button onclick="restar(${index})">-</button>
-
-            <b style="margin:15px">${p.cantidad}</b>
-
-            <button onclick="sumar(${index})">+</button>
-
-            <br><br>
-
-            Precio:
-            <b>$${p.precio.toFixed(2)}</b>
-
-            <br>
-
-            Importe:
-            <b>$${importe.toFixed(2)}</b>
-
-            <br><br>
-
-            <button onclick="eliminar(${index})">
-                🗑 Eliminar
-            </button>
-
-            <hr>
-
-        </div>
-        `;
-    });
-
-    contenedor.innerHTML = html;
-
-    document.getElementById("total").innerHTML =
-        "TOTAL: $" + total.toFixed(2);
-}
-
-function sumar(i) {
-    carrito[i].cantidad++;
-    guardarCarrito();
-    dibujarCarrito();
-}
-
-function restar(i) {
-    carrito[i].cantidad--;
-
-    if (carrito[i].cantidad <= 0) {
-        carrito.splice(i, 1);
+    if (carrito.length === 0) {
+        contenedor.innerHTML = '<p class="carritoVacio">Aún no hay productos en la cotización.</p>';
+        return;
     }
 
+    contenedor.replaceChildren();
+    carrito.forEach((producto, indice) => {
+        const item = document.createElement("article");
+        item.className = "itemCotizacion";
+        item.innerHTML = `
+            <div class="detalleItem">
+                <h3></h3>
+                <p>Clave: <span></span></p>
+                <p>Precio unitario: <strong>${dinero.format(producto.precio)}</strong></p>
+            </div>
+            <div class="controlesItem">
+                <div class="controlCantidad" aria-label="Cantidad">
+                    <button type="button" aria-label="Restar">−</button>
+                    <strong>${producto.cantidad}</strong>
+                    <button type="button" aria-label="Sumar">+</button>
+                </div>
+                <strong class="importeItem">${dinero.format(producto.precio * producto.cantidad)}</strong>
+                <button type="button" class="btnEliminar">Eliminar</button>
+            </div>`;
+        item.querySelector("h3").textContent = producto.descripcion;
+        item.querySelector("span").textContent = producto.clave;
+        const botonesCantidad = item.querySelectorAll(".controlCantidad button");
+        botonesCantidad[0].addEventListener("click", () => restar(indice));
+        botonesCantidad[1].addEventListener("click", () => sumar(indice));
+        item.querySelector(".btnEliminar").addEventListener("click", () => eliminar(indice));
+        contenedor.append(item);
+    });
+}
+
+function sumar(indice) {
+    carrito[indice].cantidad += 1;
     guardarCarrito();
     dibujarCarrito();
 }
 
-function eliminar(i) {
-    carrito.splice(i, 1);
+function restar(indice) {
+    if (carrito[indice].cantidad <= 1) carrito.splice(indice, 1);
+    else carrito[indice].cantidad -= 1;
+    guardarCarrito();
+    dibujarCarrito();
+}
+
+function eliminar(indice) {
+    carrito.splice(indice, 1);
     guardarCarrito();
     dibujarCarrito();
 }
 
 function vaciarCarrito() {
+    if (!carrito.length) return;
     carrito = [];
     guardarCarrito();
     dibujarCarrito();
 }
 
-// ===========================
-// BUSCADOR
-// ===========================
-
-const txtBuscar = document.getElementById("buscar");
-
-if (txtBuscar) {
-    txtBuscar.addEventListener("keyup", buscarV2);
-}
-
 async function buscarV2() {
-
-    const texto = txtBuscar.value.trim();
-
+    const texto = document.getElementById("buscar").value.trim();
+    const resultados = document.getElementById("resultados");
     if (texto.length < 2) {
-        document.getElementById("resultados").innerHTML = "";
+        resultados.replaceChildren();
         return;
     }
 
-    const respuesta = await fetch("/buscar?texto=" + encodeURIComponent(texto));
-    const productos = await respuesta.json();
-
-    let html = "";
-
-    productos.forEach(p => {
-
-    const precio1 = Number(p["PRECIO 1"]);
-
-    if (precio1 <= 0) return;
-
-    html += `
-    <div class="producto">
-
-        <div class="infoProducto">
-
-            <div class="descripcionProducto">
-                ${p.DESCRIPCION}
-            </div>
-
-        </div>
-
-        <button class="btnAgregar" onclick="agregarProducto(
-            '${p.CLAVE}',
-            '${String(p.DESCRIPCION).replace(/'/g,"\\'")}',
-            ${Number(p["PRECIO 1"])},
-            ${Number(p["PRECIO 2"])},
-            ${Number(p["PRECIO 3"])}
-        )">
-            ➕ Agregar
-        </button>
-
-    </div>
-    `;
-
-});
-
-    document.getElementById("resultados").innerHTML = html;
-}
-// ===========================
-// COPIAR COTIZACIÓN
-// ===========================
-
-const btnCopiar = document.getElementById("btnCopiar");
-
-if (btnCopiar) {
-
-    btnCopiar.addEventListener("click", () => {
-
-        if (carrito.length === 0) {
-            alert("No hay productos en la cotización.");
-            return;
-        }
-
-        let texto = "🧾 COTIZACIÓN SERBI\n\n";
-        let total = 0;
-
-        carrito.forEach((p, i) => {
-
-            const importe = p.precio * p.cantidad;
-            total += importe;
-
-            texto += `${i + 1}. ${p.descripcion}
-Cantidad: ${p.cantidad}
-Precio: $${p.precio.toFixed(2)}
-Importe: $${importe.toFixed(2)}
-
-`;
+    try {
+        const respuesta = await fetch(`/buscar?texto=${encodeURIComponent(texto)}`);
+        if (!respuesta.ok) throw new Error("No fue posible buscar productos.");
+        const productos = await respuesta.json();
+        resultados.replaceChildren();
+        productos.filter((p) => Number(p["PRECIO 1"]) > 0).forEach((p) => {
+            const tarjeta = document.createElement("article");
+            tarjeta.className = "producto";
+            const descripcion = document.createElement("div");
+            descripcion.className = "descripcionProducto";
+            descripcion.textContent = p.DESCRIPCION;
+            const boton = document.createElement("button");
+            boton.className = "btnAgregar";
+            boton.type = "button";
+            boton.textContent = "Agregar";
+            boton.addEventListener("click", () => abrirModal({
+                clave: String(p.CLAVE || ""),
+                descripcion: String(p.DESCRIPCION || "Sin descripción"),
+                precios: [
+                    { nombre: "Precio 1", valor: Number(p["PRECIO 1"]) },
+                    { nombre: "Precio 2", valor: Number(p["PRECIO 2"]) },
+                    { nombre: "Precio 3", valor: Number(p["PRECIO 3"]) }
+                ]
+            }));
+            tarjeta.append(descripcion, boton);
+            resultados.append(tarjeta);
         });
+        if (!resultados.children.length) resultados.innerHTML = '<p class="sinResultados">No se encontraron productos con precio disponible.</p>';
+    } catch (error) {
+        resultados.innerHTML = '<p class="sinResultados">No fue posible realizar la búsqueda. Intenta de nuevo.</p>';
+    }
+}
 
-        texto += "--------------------------\n";
-        texto += "TOTAL: $" + total.toFixed(2);
-
-        navigator.clipboard.writeText(texto)
-            .then(() => alert("Cotización copiada al portapapeles"))
-            .catch(() => alert("No fue posible copiar la cotización"));
-
+function textoCotizacion() {
+    let total = 0;
+    const lineas = carrito.map((producto, indice) => {
+        const importe = producto.precio * producto.cantidad;
+        total += importe;
+        return `${indice + 1}. ${producto.descripcion}\nClave: ${producto.clave}\nCantidad: ${producto.cantidad}\nPrecio: ${dinero.format(producto.precio)}\nImporte: ${dinero.format(importe)}`;
     });
+    return `COTIZACIÓN SERBI\n\n${lineas.join("\n\n")}\n\n--------------------------\nTOTAL: ${dinero.format(total)}`;
+}
 
+async function copiarCotizacion() {
+    if (!carrito.length) return alert("No hay productos en la cotización.");
+    try {
+        await navigator.clipboard.writeText(textoCotizacion());
+        alert("Cotización copiada al portapapeles.");
+    } catch (_) {
+        alert("No fue posible copiar la cotización.");
+    }
+}
+
+function enviarWhatsApp() {
+    if (!carrito.length) return alert("No hay productos en la cotización.");
+    window.open(`https://wa.me/?text=${encodeURIComponent(textoCotizacion())}`, "_blank", "noopener");
 }

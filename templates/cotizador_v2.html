@@ -1,191 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Cotizador | SERBI Pinturas y Recubrimientos</title>
-
     <link rel="stylesheet" href="/static/css/style.css">
-
 </head>
-
 <body>
+    <main class="contenedor">
+        <header class="encabezado">
+            <img src="/static/img/logo.png" class="logo" alt="SERBI">
+            <div>
+                <h1>SERBI COTIZADOR</h1>
+                <p>SERBI Pinturas y Recubrimientos</p>
+                {% if fecha_actualizacion %}
+                <p class="fechaActualizacion">Última actualización: <strong>{{ fecha_actualizacion }}</strong></p>
+                {% endif %}
+            </div>
+        </header>
 
-<div class="contenedor">
+        <section class="buscador" aria-label="Buscar productos">
+            <input type="search" id="buscar" autocomplete="off" placeholder="Buscar por código o descripción…">
+        </section>
+        <section id="resultados" class="resultados" aria-live="polite"></section>
 
-    <header class="encabezado">
+        <section class="carrito" aria-label="Cotización actual">
+            <div class="tituloCarrito">
+                <h2>🛒 Cotización</h2>
+                <button id="btnVaciar" type="button">Vaciar</button>
+            </div>
+            <div id="cotizacion"></div>
+            <div class="total"><h2 id="total">TOTAL: $0.00</h2></div>
+            <div class="acciones">
+                <button id="btnWhatsapp" type="button">Enviar por WhatsApp</button>
+                <button id="btnCopiar" type="button">Copiar cotización</button>
+            </div>
+        </section>
+    </main>
 
-        <img src="/static/img/logo.png" class="logo">
-
-        <div>
-
-            <h1>SERBI COTIZADOR</h1>
-
-            <p>SERBI Pinturas y Recubrimientos</p>
-
-            <p style="font-size:13px;color:#666;margin-top:5px;">
-                📅 Última actualización del Excel:
-                <strong>{{ fecha_actualizacion }}</strong>
-            </p>
-
+    <div id="modalProducto" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+        <div class="modalContenido">
+            <button id="cerrarModal" class="cerrarModal" type="button" aria-label="Cerrar">×</button>
+            <h2 id="modalTitulo"></h2>
+            <div id="seccionPrecio" class="seccionModal">
+                <label class="etiquetaModal">Selecciona el precio</label>
+                <div id="opcionesPrecio" class="opcionesPrecio"></div>
+            </div>
+            <div class="seccionModal">
+                <label class="etiquetaModal" for="cantidadModal">Cantidad</label>
+                <div class="cantidadBox">
+                    <button id="menos" type="button" aria-label="Restar cantidad">−</button>
+                    <input id="cantidadModal" type="number" min="1" value="1" inputmode="numeric">
+                    <button id="mas" type="button" aria-label="Sumar cantidad">+</button>
+                </div>
+            </div>
+            <div class="botonesModal">
+                <button id="cancelarModal" type="button">Cancelar</button>
+                <button id="agregarModal" type="button">Agregar a cotización</button>
+            </div>
         </div>
-
-    </header>
-
-    <div class="buscador">
-
-        <input
-            type="text"
-            id="buscar"
-            autocomplete="off"
-            placeholder="Buscar por código o descripción...">
-
     </div>
-
-    <div id="resultados" class="resultados">
-
-    </div>
-
-    <div class="carrito">
-
-        <div class="tituloCarrito">
-
-            <h2>🛒 Cotización</h2>
-
-            <button onclick="vaciarCarrito()">
-
-                Vaciar
-
-            </button>
-
-        </div>
-
-        <div id="cotizacion">
-
-            No hay productos agregados.
-
-        </div>
-
-        <div class="total">
-
-            <h2 id="total">
-
-                TOTAL: $0.00
-
-            </h2>
-
-        </div>
-
-        <div class="acciones">
-
-            <button id="btnWhatsapp">
-
-                📱 Enviar WhatsApp
-
-            </button>
-
-            <button id="btnCopiar">
-
-                📋 Copiar
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Modal -->
-<div id="modalProducto" class="modal">
-
-    <div class="modalContenido">
-
-        <h2 id="modalTitulo"></h2>
-
-        <br>
-
-        <label>Cantidad</label>
-
-        <div class="cantidadBox">
-
-            <button id="menos">−</button>
-
-            <input
-                id="cantidadModal"
-                type="number"
-                min="1"
-                value="1">
-
-            <button id="mas">+</button>
-
-        </div>
-
-        <br>
-
-        <label>Precio</label>
-
-        <br><br>
-
-        <label>
-
-            <input type="radio" name="precioModal" value="1" checked>
-
-            Precio 1
-            <span id="precio1txt"></span>
-
-        </label>
-
-        <br><br>
-
-        <label>
-
-            <input type="radio" name="precioModal" value="2">
-
-            Precio 2
-            <span id="precio2txt"></span>
-
-        </label>
-
-        <br><br>
-
-        <label>
-
-            <input type="radio" name="precioModal" value="3">
-
-            Precio 3
-            <span id="precio3txt"></span>
-
-        </label>
-
-        <br><br><br>
-
-        <div class="botonesModal">
-
-            <button id="cancelarModal">
-
-                Cancelar
-
-            </button>
-
-            <button id="agregarModal">
-
-                Agregar
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<script src="/static/js/app.js"></script>
-
+    <script src="/static/js/app.js"></script>
 </body>
-
 </html>
