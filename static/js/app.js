@@ -6,6 +6,9 @@ let busquedaActual = 0;
 let ultimoEnfoque = null;
 
 const dinero = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+function formatoMoneda(valor) {
+    return dinero.format(valor).replace(".00", "");
+}
 const $ = (selector) => document.querySelector(selector);
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -82,11 +85,10 @@ function mostrarResultados(productos) {
     disponibles.forEach((producto) => {
         const tarjeta = document.createElement("article");
         tarjeta.className = "producto";
-        tarjeta.innerHTML = '<div><p class="claveProducto"></p><h2></h2><p class="precioDesde"></p></div><button class="btnAgregar" type="button">Agregar <span aria-hidden="true">+</span></button>';
-        tarjeta.querySelector(".claveProducto").textContent = `Clave: ${producto.CLAVE || "—"}`;
+        tarjeta.innerHTML = '<div><h2></h2><p class="precioDesde"></p></div><button class="btnAgregar" type="button">Agregar <span aria-hidden="true">+</span></button>';
         tarjeta.querySelector("h2").textContent = producto.DESCRIPCION || "Sin descripción";
         const precios = preciosDe(producto);
-        tarjeta.querySelector(".precioDesde").textContent = precios.length === 1 ? dinero.format(precios[0].valor) : `Desde ${dinero.format(Math.min(...precios.map(p => p.valor)))}`;
+        tarjeta.querySelector(".precioDesde").textContent = precios.length === 1 ? formatoMoneda(precios[0].valor) : `Desde ${formatoMoneda(Math.min(...precios.map(p => p.valor)))}`;
         tarjeta.querySelector("button").addEventListener("click", () => abrirModal(producto));
         resultados.append(tarjeta);
     });
@@ -101,7 +103,6 @@ function abrirModal(producto) {
     ultimoEnfoque = document.activeElement;
     productoPendiente = { clave: String(producto.CLAVE || ""), descripcion: String(producto.DESCRIPCION || "Sin descripción"), precios: preciosDe(producto) };
     $("#modalTitulo").textContent = productoPendiente.descripcion;
-    $("#modalClave").textContent = productoPendiente.clave ? `Clave: ${productoPendiente.clave}` : "";
     $("#cantidadModal").value = 1;
     const opciones = $("#opcionesPrecio");
     opciones.replaceChildren();
@@ -109,7 +110,7 @@ function abrirModal(producto) {
     productoPendiente.precios.forEach((precio, indice) => {
         const opcion = document.createElement("label");
         opcion.className = "opcionPrecio";
-        opcion.innerHTML = `<input type="radio" name="precioModal" value="${precio.valor}" ${indice === 0 ? "checked" : ""}><span>${precio.nombre}</span><strong>${dinero.format(precio.valor)}</strong>`;
+        opcion.innerHTML = `<input type="radio" name="precioModal" value="${precio.valor}" ${indice === 0 ? "checked" : ""}><span>${precio.nombre}</span><strong>${formatoMoneda(precio.valor)}</strong>`;
         opciones.append(opcion);
     });
     abrirModalBase("#modalProducto", "#modalProducto .modalContenido");
@@ -141,7 +142,7 @@ function dibujarCarrito() {
     const contenedor = $("#cotizacion");
     const piezas = carrito.reduce((suma, item) => suma + item.cantidad, 0);
     const total = carrito.reduce((suma, item) => suma + item.precio * item.cantidad, 0);
-    $("#total").textContent = dinero.format(total);
+    $("#total").textContent = formatoMoneda(total);
     $("#contadorCarrito").textContent = piezas;
     $("#contadorPanel").textContent = piezas;
     $("#btnVaciar").hidden = !carrito.length;
@@ -149,9 +150,8 @@ function dibujarCarrito() {
     contenedor.replaceChildren();
     carrito.forEach((producto, indice) => {
         const item = document.createElement("article"); item.className = "itemCotizacion";
-        item.innerHTML = `<div class="detalleItem"><h3></h3><p></p><strong>${dinero.format(producto.precio)}</strong></div><div class="controlesItem"><button class="btnQuitar" type="button" aria-label="Eliminar producto">×</button><div class="controlCantidad"><button type="button" aria-label="Restar">−</button><span>${producto.cantidad}</span><button type="button" aria-label="Sumar">+</button></div><strong class="importeItem">${dinero.format(producto.precio * producto.cantidad)}</strong></div>`;
+        item.innerHTML = `<div class="detalleItem"><h3></h3><strong>${formatoMoneda(producto.precio)}</strong></div><div class="controlesItem"><button class="btnQuitar" type="button" aria-label="Eliminar producto">×</button><div class="controlCantidad"><button type="button" aria-label="Restar">−</button><span>${producto.cantidad}</span><button type="button" aria-label="Sumar">+</button></div><strong class="importeItem">${formatoMoneda(producto.precio * producto.cantidad)}</strong></div>`;
         item.querySelector("h3").textContent = producto.descripcion;
-        item.querySelector("p").textContent = producto.clave ? `Clave: ${producto.clave}` : "";
         const botones = item.querySelectorAll(".controlCantidad button");
         botones[0].addEventListener("click", () => ajustarCantidad(indice, -1)); botones[1].addEventListener("click", () => ajustarCantidad(indice, 1));
         item.querySelector(".btnQuitar").addEventListener("click", () => { carrito.splice(indice, 1); guardarCarrito(); dibujarCarrito(); }); contenedor.append(item);
@@ -165,7 +165,7 @@ function pedirVaciado() { if (carrito.length) abrirModalBase("#modalConfirmacion
 function vaciarCarrito() { carrito = []; guardarCarrito(); dibujarCarrito(); cerrarModal("#modalConfirmacion"); mostrarToast("La cotización quedó vacía."); }
 function limpiarBusqueda() { busquedaActual++; $("#buscar").value = ""; $("#limpiarBusqueda").hidden = true; $("#resultados").replaceChildren(); $("#ayudaBusqueda").textContent = "Escribe al menos 2 caracteres para buscar."; $("#buscar").focus(); }
 
-function textoCotizacion() { let total = 0; const lineas = carrito.map((p, i) => { const importe = p.precio * p.cantidad; total += importe; return `${i + 1}. ${p.descripcion}\n   Clave: ${p.clave || "—"}\n   ${p.cantidad} × ${dinero.format(p.precio)} = ${dinero.format(importe)}`; }); return `COTIZACIÓN SERBI\n\n${lineas.join("\n\n")}\n\nTOTAL: ${dinero.format(total)}`; }
+function textoCotizacion() { let total = 0; const lineas = carrito.map((p, i) => { const importe = p.precio * p.cantidad; total += importe; return `${i + 1}. ${p.descripcion}\n   ${p.cantidad} × ${formatoMoneda(p.precio)} = ${formatoMoneda(importe)}`; }); return `COTIZACIÓN SERBI\n\n${lineas.join("\n\n")}\n\nTOTAL: ${formatoMoneda(total)}`; }
 async function copiarCotizacion() { if (!carrito.length) return mostrarToast("Agrega productos antes de copiar.", true); try { await navigator.clipboard.writeText(textoCotizacion()); mostrarToast("Cotización copiada al portapapeles."); } catch (_) { mostrarToast("No fue posible copiar la cotización.", true); } }
 function enviarWhatsApp() { if (!carrito.length) return mostrarToast("Agrega productos antes de enviarla.", true); window.open(`https://wa.me/?text=${encodeURIComponent(textoCotizacion())}`, "_blank", "noopener,noreferrer"); }
 function mostrarToast(mensaje, esError = false) { const toast = $("#toast"); toast.textContent = mensaje; toast.classList.toggle("error", esError); toast.hidden = false; requestAnimationFrame(() => toast.classList.add("visible")); clearTimeout(mostrarToast.id); mostrarToast.id = setTimeout(() => { toast.classList.remove("visible"); setTimeout(() => { toast.hidden = true; }, 180); }, 3000); }
