@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d4c92">
+    <title>Cotizador SERBI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <main class="contenedor">
+        <header class="encabezado">
+            <img src="/static/img/logo.png" class="logo" alt="SERBI Pinturas y Recubrimientos">
+            <div>
+                <p class="marca">SERBI Pinturas y Recubrimientos</p>
+                <h1>Cotizador</h1>
+                {% if fecha_actualizacion %}<p class="fechaActualizacion">Precios actualizados: <strong>{{ fecha_actualizacion }}</strong></p>{% endif %}
+            </div>
+        </header>
+
+        <section class="buscador" aria-label="Buscar productos">
+            <label class="sr-only" for="buscar">Buscar producto</label>
+            <span class="lupa" aria-hidden="true">⌕</span>
+            <input type="search" id="buscar" autocomplete="off" enterkeyhint="search" placeholder="Busca por clave o descripción…">
+            <button id="limpiarBusqueda" class="limpiarBusqueda" type="button" hidden aria-label="Limpiar búsqueda">×</button>
+        </section>
+        <p id="ayudaBusqueda" class="ayudaBusqueda">Escribe al menos 2 caracteres para buscar.</p>
+        <section id="resultados" class="resultados" aria-live="polite"></section>
+    </main>
+
+    <aside id="panelCarrito" class="panelCarrito" aria-label="Cotización actual" aria-hidden="true">
+        <div class="panelCabecera">
+            <div><p class="eyebrow">TU COTIZACIÓN</p><h2>Carrito <span id="contadorPanel" class="contadorPanel">0</span></h2></div>
+            <button id="cerrarCarrito" class="btnIcono" type="button" aria-label="Cerrar carrito">×</button>
+        </div>
+        <div id="cotizacion" class="lineasCarrito"></div>
+        <div class="pieCarrito">
+            <div class="total"><span>Total estimado</span><strong id="total">$0.00</strong></div>
+            <div class="acciones">
+                <button id="btnWhatsapp" class="btnWhatsapp" type="button">WhatsApp</button>
+                <button id="btnCopiar" class="btnCopiar" type="button">Copiar</button>
+            </div>
+            <button id="btnVaciar" class="btnTextoPeligro" type="button">Vaciar cotización</button>
+        </div>
+    </aside>
+    <button id="abrirCarrito" class="carritoFlotante" type="button" aria-controls="panelCarrito" aria-expanded="false">
+        <span aria-hidden="true">🛒</span><span>Ver cotización</span><strong id="contadorCarrito">0</strong>
+    </button>
+    <div id="fondoCarrito" class="fondoCarrito" hidden></div>
+
+    <div id="modalProducto" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo" hidden>
+        <div class="modalContenido" tabindex="-1">
+            <button id="cerrarModal" class="cerrarModal" type="button" aria-label="Cerrar">×</button>
+            <p class="eyebrow">AGREGAR PRODUCTO</p>
+            <h2 id="modalTitulo"></h2>
+            <p id="modalClave" class="modalClave"></p>
+            <div id="seccionPrecio" class="seccionModal">
+                <span class="etiquetaModal">Elige el precio</span>
+                <div id="opcionesPrecio" class="opcionesPrecio"></div>
+            </div>
+            <div class="seccionModal">
+                <label class="etiquetaModal" for="cantidadModal">Cantidad</label>
+                <div class="cantidadBox">
+                    <button id="menos" type="button" aria-label="Restar cantidad">−</button>
+                    <input id="cantidadModal" type="number" min="1" max="9999" value="1" inputmode="numeric">
+                    <button id="mas" type="button" aria-label="Sumar cantidad">+</button>
+                </div>
+            </div>
+            <div class="botonesModal">
+                <button id="cancelarModal" class="btnSecundario" type="button">Cancelar</button>
+                <button id="agregarModal" class="btnPrimario" type="button">Agregar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalConfirmacion" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmacionTitulo" hidden>
+        <div class="modalContenido modalCorta" tabindex="-1">
+            <p class="eyebrow">CONFIRMACIÓN</p>
+            <h2 id="confirmacionTitulo">¿Vaciar cotización?</h2>
+            <p>Se eliminarán todos los productos agregados.</p>
+            <div class="botonesModal"><button id="cancelarVaciado" class="btnSecundario" type="button">Conservar</button><button id="confirmarVaciado" class="btnPeligro" type="button">Sí, vaciar</button></div>
+        </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

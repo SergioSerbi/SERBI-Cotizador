@@ -46,7 +46,7 @@ def inicio(request: Request):
 
     return templates.TemplateResponse(
         request=request,
-        name="cotizador_v2.html",
+        name="cotizador_v3.html",
         context={
             "request": request,
             "productos": productos,
@@ -56,12 +56,12 @@ def inicio(request: Request):
     )
 
 
-@app.get("/v2")
-def cotizador_v2(request: Request):
+@app.get("/v3")
+def cotizador_v3(request: Request):
 
     return templates.TemplateResponse(
         request=request,
-        name="cotizador_v2.html",
+        name="cotizador_v3.html",
         context={
             "request": request
         }
