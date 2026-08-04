@@ -112,7 +112,7 @@ function abrirModal(producto) {
         opcion.innerHTML = `<input type="radio" name="precioModal" value="${precio.valor}" ${indice === 0 ? "checked" : ""}><span>${precio.nombre}</span><strong>${dinero.format(precio.valor)}</strong>`;
         opciones.append(opcion);
     });
-    abrirModalBase("#modalProducto", "#cantidadModal");
+    abrirModalBase("#modalProducto", "#modalProducto .modalContenido");
 }
 
 function confirmarProducto() {
