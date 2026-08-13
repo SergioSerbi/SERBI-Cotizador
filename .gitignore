@@ -22,7 +22,6 @@ client_secret_*.json
 # SICAR backups and local Drive test data
 *.sr
 data/drive_prueba/
-data/existencias_sucursales.json
 
 # Local test scripts
 probar_*.py
