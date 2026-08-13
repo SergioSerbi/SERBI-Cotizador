@@ -12,7 +12,9 @@ from services.sicar_respaldo import consolidar_respaldos
 
 
 BASE = Path(__file__).resolve().parent.parent
-TOKEN = BASE / "token_drive.json"
+TOKEN = Path("/etc/secrets/token_drive.json")
+if not TOKEN.exists():
+    TOKEN = BASE / "token_drive.json"
 SALIDA_JSON = BASE / "data" / "existencias_sucursales.json"
 
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
