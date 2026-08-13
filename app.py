@@ -8,14 +8,49 @@ from datetime import datetime
 
 from services.buscador import buscar
 from services.existencias import agregar_existencias
+from services.drive_sicar import actualizar_existencias
+import hmac
 from routes.admin import router as admin_router
 from routes.upload import router as upload_router
 
 app = FastAPI(title="SERBI STOCK")
+CLAVE_ACTUALIZACION = os.getenv("SERBI_UPDATE_KEY", "")
 
 # Routers
 app.include_router(admin_router)
 app.include_router(upload_router)
+@app.post("/internal/actualizar-existencias")
+def actualizar_existencias_endpoint(request: Request):
+    clave = request.headers.get("X-SERBI-UPDATE-KEY", "")
+
+    if not CLAVE_ACTUALIZACION or not hmac.compare_digest(
+        clave, CLAVE_ACTUALIZACION
+    ):
+        return JSONResponse(
+            content={"error": "No autorizado"},
+            status_code=401,
+        )
+
+    try:
+        actualizar_existencias()
+
+        return JSONResponse(
+            content={
+                "ok": True,
+                "mensaje": "Existencias actualizadas correctamente",
+            }
+        )
+
+    except Exception as error:
+        print(f"ERROR ACTUALIZANDO EXISTENCIAS: {error}")
+
+        return JSONResponse(
+            content={
+                "ok": False,
+                "error": "No fue posible actualizar las existencias",
+            },
+            status_code=500,
+        )
 
 # Archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
