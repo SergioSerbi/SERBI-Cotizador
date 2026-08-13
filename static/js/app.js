@@ -85,13 +85,26 @@ function mostrarResultados(productos) {
     disponibles.forEach((producto) => {
         const tarjeta = document.createElement("article");
         tarjeta.className = "producto";
-        tarjeta.innerHTML = '<div><h2></h2><p class="precioDesde"></p></div><button class="btnAgregar" type="button">Agregar <span aria-hidden="true">+</span></button>';
+        tarjeta.innerHTML = '<div class="productoInfo"><h2></h2><p class="precioDesde"></p><section class="existencias" aria-label="Existencias por sucursal"><h3>Existencias por sucursal</h3><ul></ul></section></div><button class="btnAgregar" type="button">Agregar <span aria-hidden="true">+</span></button>';
         tarjeta.querySelector("h2").textContent = producto.DESCRIPCION || "Sin descripción";
         const precios = preciosDe(producto);
         tarjeta.querySelector(".precioDesde").textContent = precios.length === 1 ? formatoMoneda(precios[0].valor) : `Desde ${formatoMoneda(Math.min(...precios.map(p => p.valor)))}`;
+        const listaExistencias = tarjeta.querySelector(".existencias ul");
+        (producto.EXISTENCIAS_SUCURSALES || []).forEach((inventario) => {
+            const elemento = document.createElement("li");
+            const existencia = Number(inventario.existencia);
+            elemento.innerHTML = '<span></span><strong></strong>';
+            elemento.querySelector("span").textContent = inventario.sucursal;
+            elemento.querySelector("strong").textContent = Number.isFinite(existencia) ? formatoExistencia(existencia) : "0";
+            listaExistencias.append(elemento);
+        });
         tarjeta.querySelector("button").addEventListener("click", () => abrirModal(producto));
         resultados.append(tarjeta);
     });
+}
+
+function formatoExistencia(valor) {
+    return new Intl.NumberFormat("es-MX", { maximumFractionDigits: 2 }).format(valor);
 }
 
 function preciosDe(producto) {

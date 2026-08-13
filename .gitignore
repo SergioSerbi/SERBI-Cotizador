@@ -14,3 +14,15 @@ __pycache__/
 
 # Environment variables
 .env
+
+# Google Drive credentials
+token_drive.json
+client_secret_*.json
+
+# SICAR backups and local Drive test data
+*.sr
+data/drive_prueba/
+data/existencias_sucursales.json
+
+# Local test scripts
+probar_*.py

@@ -7,14 +7,17 @@ import os
 from datetime import datetime
 
 from services.buscador import buscar
+from services.existencias import agregar_existencias
 from routes.admin import router as admin_router
 from routes.upload import router as upload_router
 
 app = FastAPI(title="SERBI STOCK")
 
+# Routers
 app.include_router(admin_router)
 app.include_router(upload_router)
 
+# Archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
@@ -27,15 +30,14 @@ def inicio(request: Request):
 
     resultados = buscar(texto).copy()
 
-    # El nuevo Excel solo tiene una columna de Precio
     resultados["PRECIO COMPRA"] = (resultados["PRECIO COMPRA"] * 1.16).round(2)
     resultados["PRECIO 1"] = (resultados["PRECIO 1"] * 1.16).round(2)
     resultados["PRECIO 2"] = (resultados["PRECIO 2"] * 1.16).round(2)
     resultados["PRECIO 3"] = (resultados["PRECIO 3"] * 1.16).round(2)
 
+    resultados = resultados.fillna(0)
 
-
-    productos = resultados.head(50).to_dict(orient="records")
+    productos = agregar_existencias(resultados.head(50).to_dict(orient="records"))
 
     archivo_excel = "data/articulosExportados Santa Rosa.xlsx"
 
@@ -55,10 +57,20 @@ def inicio(request: Request):
     )
 
 
+@app.get("/v3")
+def cotizador_v3(request: Request):
+
+    return templates.TemplateResponse(
+        request=request,
+        name="cotizador_v3.html",
+        context={
+            "request": request
+        }
+    )
+
+
 @app.get("/buscar")
 def buscar_ajax(texto: str = ""):
-
-    import numpy as np
 
     resultados = buscar(texto).copy()
 
@@ -67,8 +79,8 @@ def buscar_ajax(texto: str = ""):
     resultados["PRECIO 2"] = (resultados["PRECIO 2"] * 1.16).round(2)
     resultados["PRECIO 3"] = (resultados["PRECIO 3"] * 1.16).round(2)
 
-    resultados = resultados.replace({np.nan: ""})
+    resultados = resultados.fillna(0)
 
-    productos = resultados.head(50).to_dict(orient="records")
+    productos = agregar_existencias(resultados.head(50).to_dict(orient="records"))
 
     return JSONResponse(content=productos)
