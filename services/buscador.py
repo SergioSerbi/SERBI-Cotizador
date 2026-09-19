@@ -1,17 +1,12 @@
-import os
 import pandas as pd
 
-if os.path.exists("data/articulosExportados Santa Rosa.xlsx"):
-    archivo = "data/articulosExportados Santa Rosa.xlsx"
-elif os.path.exists("data/articulosExportados Santa Rosa.xls"):
-    archivo = "data/articulosExportados Santa Rosa.xls"
-else:
-    raise FileNotFoundError("No existe ningún catálogo.")
+archivo = "data/articulosExportados Santa Rosa.xlsx"
 
 df = pd.read_excel(archivo)
 
-# Eliminar todos los NaN desde el origen
-df = df.where(pd.notnull(df), "")
+print(df["PRECIO 1"].head(20))
+print(df["PRECIO 1"].dtype)
+
 
 def buscar(texto):
 
@@ -19,7 +14,7 @@ def buscar(texto):
 
     resultados = df[
         df.astype(str)
-        .apply(lambda fila: fila.str.upper().str.contains(texto, na=False))
+        .apply(lambda fila: fila.str.upper().str.contains(texto))
         .any(axis=1)
     ]
 

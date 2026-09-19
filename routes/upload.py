@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import HTMLResponse
 import shutil
-import os
 
 router = APIRouter()
 
@@ -9,9 +8,7 @@ router = APIRouter()
 @router.post("/upload")
 async def upload_excel(archivo: UploadFile = File(...)):
 
-    extension = os.path.splitext(archivo.filename)[1].lower()
-
-    destino = f"data/articulosExportados Santa Rosa{extension}"
+    destino = "data/articulosExportados Santa Rosa.xlsx"
 
     with open(destino, "wb") as buffer:
         shutil.copyfileobj(archivo.file, buffer)
