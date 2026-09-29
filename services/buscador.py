@@ -44,7 +44,10 @@ def buscar(texto):
     if not terminos:
         return catalogo
 
-    texto_productos = catalogo.astype(str).agg(" ".join, axis=1).map(normalizar_texto)
+    texto_productos = catalogo.apply(
+        lambda fila: normalizar_texto(" ".join(str(valor) for valor in fila.values)),
+        axis=1,
+    )
     coincide = pd.Series(True, index=catalogo.index)
     for termino in terminos:
         coincide &= texto_productos.str.contains(termino, regex=False)
