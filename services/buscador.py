@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import re
+import unicodedata
 from threading import RLock
 
 archivo = "data/articulosExportados Santa Rosa.xlsx"
@@ -22,21 +24,31 @@ def recargar_catalogo():
         _mtime = os.stat(archivo).st_mtime_ns
 
 
+def normalizar_texto(valor):
+    texto = unicodedata.normalize("NFKD", str(valor).casefold())
+    texto = "".join(caracter for caracter in texto if not unicodedata.combining(caracter))
+    return re.sub(r"[^\w]+", " ", texto).strip()
+
+
 def buscar(texto):
     global df, _mtime
     mtime_actual = os.stat(archivo).st_mtime_ns
     if mtime_actual != _mtime:
         recargar_catalogo()
 
-    texto = str(texto).upper()
+    terminos = normalizar_texto(texto).split()
 
     with _lock:
         catalogo = df.copy()
 
-    resultados = catalogo[
-        catalogo.astype(str)
-        .apply(lambda fila: fila.str.upper().str.contains(texto, regex=False))
-        .any(axis=1)
-    ]
+    if not terminos:
+        return catalogo
+
+    texto_productos = catalogo.astype(str).agg(" ".join, axis=1).map(normalizar_texto)
+    coincide = pd.Series(True, index=catalogo.index)
+    for termino in terminos:
+        coincide &= texto_productos.str.contains(termino, regex=False)
+
+    resultados = catalogo[coincide]
 
     return resultados
