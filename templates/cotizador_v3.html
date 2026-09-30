@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#0d4c92">
     <title>Cotizador SERBI</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/costos.css">
 </head>
 <body>
     <main class="contenedor">
@@ -18,6 +19,11 @@
                 {% if fecha_actualizacion %}<p class="fechaActualizacion">Precios actualizados: <strong>{{ fecha_actualizacion }}</strong></p>{% endif %}
             </div>
         </header>
+
+        <nav class="costosNav" aria-label="Secciones SERBI">
+            <a href="/" class="activo">🧾 COTIZADOR</a>
+            <a href="/costos">🔎 SERBI-COSTOS</a>
+        </nav>
 
         <section class="buscador" aria-label="Buscar productos">
             <label class="sr-only" for="buscar">Buscar producto</label>
