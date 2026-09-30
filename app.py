@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from services.buscador import buscar
+from services.costos import buscar_costos, resumen_costos
 
 app = FastAPI(title="SERBI Cotizador")
 SECRET_KEY = os.getenv("SECRET_KEY", "")
@@ -123,7 +124,6 @@ async def require_pin(request: Request, call_next):
     return RedirectResponse(url="/login", status_code=303)
 
 
-# Register after the auth decorator so the session scope is available to it.
 app.add_middleware(SignedSessionMiddleware, secret_key=SECRET_KEY, secure=IS_PRODUCTION)
 
 
@@ -177,6 +177,20 @@ def productos_para(texto: str):
         if columna in resultados:
             resultados[columna] = (resultados[columna] * 1.16).round(2)
     return resultados.fillna(0).head(50).to_dict(orient="records")
+
+
+@app.get("/costos", response_class=HTMLResponse)
+def costos_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="costos.html",
+        context={"request": request, "resumen": resumen_costos()},
+    )
+
+
+@app.get("/api/costos")
+def costos_ajax(texto: str = ""):
+    return JSONResponse(content=buscar_costos(texto))
 
 
 @app.get("/")
