@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d4c92">
+    <title>SERBI-Costos</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/costos.css">
+</head>
+<body>
+<main class="contenedor">
+    <header class="encabezado">
+        <img src="/static/img/logo.png" class="logo" alt="SERBI Pinturas y Recubrimientos">
+        <div>
+            <p class="marca">SERBI Pinturas y Recubrimientos</p>
+            <h1>SERBI-Costos</h1>
+            <form class="formSalir" method="post" action="/logout"><button type="submit">Salir</button></form>
+            <p class="fechaActualizacion">Lista SAYER: <strong>{{ resumen.fecha }}</strong></p>
+        </div>
+    </header>
+
+    <nav class="costosNav" aria-label="Secciones SERBI">
+        <a href="/">🧾 COTIZADOR</a>
+        <a href="/costos" class="activo">🔎 SERBI-COSTOS</a>
+    </nav>
+
+    <p class="costosIntro">Consulta costos SAYER y precios públicos de la lista cargada. Los costos se muestran <strong>más IVA</strong> y los precios públicos <strong>con IVA incluido</strong>.</p>
+
+    <section class="buscadorCostos" aria-label="Buscar productos SAYER">
+        <label class="sr-only" for="buscarCostos">Buscar producto SAYER</label>
+        <span class="lupa" aria-hidden="true">⌕</span>
+        <input type="search" id="buscarCostos" autocomplete="off" enterkeyhint="search" placeholder="Busca por código, descripción o presentación…">
+        <button id="limpiarCostos" class="limpiarBusqueda" type="button" hidden aria-label="Limpiar búsqueda">×</button>
+    </section>
+    <p id="ayudaCostos" class="costoAyuda">Escribe al menos 2 caracteres para buscar.</p>
+    <section id="resultadosCostos" class="resultadosCostos" aria-live="polite"></section>
+</main>
+<script src="/static/js/costos.js"></script>
+</body>
+</html>
