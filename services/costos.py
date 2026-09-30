@@ -1,4 +1,6 @@
+import base64
 import json
+import lzma
 import re
 import sqlite3
 import unicodedata
@@ -6,7 +8,8 @@ from functools import lru_cache
 from pathlib import Path
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "serbi_costos.db"
-DB_ARCHIVE_PREFIX = Path(__file__).resolve().parent.parent / "data" / "serbi_costos.db.gz.part"
+DB_XZ_PREFIX = Path(__file__).resolve().parent.parent / "data" / "serbi_costos.db.xz.b64.part"
+DB_GZIP_PREFIX = Path(__file__).resolve().parent.parent / "data" / "serbi_costos.db.gz.part"
 MAX_RESULTS = 30
 
 
@@ -23,14 +26,24 @@ def compacto(valor: str) -> str:
 def _materializar_db() -> None:
     if DB_PATH.exists():
         return
-    parts = sorted(DB_ARCHIVE_PREFIX.parent.glob(DB_ARCHIVE_PREFIX.name + "*"))
-    if not parts:
+
+    parts_xz = sorted(DB_XZ_PREFIX.parent.glob(DB_XZ_PREFIX.name + "*"))
+    if parts_xz:
+        try:
+            encoded = "".join(p.read_text(encoding="ascii").strip() for p in parts_xz)
+            DB_PATH.write_bytes(lzma.decompress(base64.b64decode(encoded)))
+            return
+        except (OSError, EOFError, lzma.LZMAError, ValueError):
+            if DB_PATH.exists():
+                DB_PATH.unlink()
+
+    parts_gzip = sorted(DB_GZIP_PREFIX.parent.glob(DB_GZIP_PREFIX.name + "*"))
+    if not parts_gzip:
         return
-    import base64
     import gzip
     try:
-        raw = b"".join(base64.b64decode(p.read_text(encoding="ascii")) for p in parts)
-        DB_PATH.write_bytes(gzip.decompress(raw))
+        encoded = "".join(p.read_text(encoding="ascii").strip() for p in parts_gzip)
+        DB_PATH.write_bytes(gzip.decompress(base64.b64decode(encoded)))
     except (OSError, EOFError, gzip.BadGzipFile, ValueError):
         if DB_PATH.exists():
             DB_PATH.unlink()
