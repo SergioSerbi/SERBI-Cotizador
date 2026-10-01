@@ -19,11 +19,6 @@ def normalizar_texto(valor: str) -> str:
     return re.sub(r"[^\w]+", " ", texto).strip()
 
 
-def limpiar_descripcion(valor: str) -> str:
-    """Limpia caracteres de moneda incrustados en descripciones de SAYER."""
-    return re.sub(r"\\s+", " ", str(valor or "").replace("$", "")).strip()
-
-
 def compacto(valor: str) -> str:
     return re.sub(r"[^a-z0-9]", "", normalizar_texto(valor))
 
@@ -123,7 +118,7 @@ def cargar_productos() -> list[dict]:
                     "id": row["id"],
                     "codigo": row["codigo"],
                     "codigo_base": row["codigo_base"],
-                    "descripcion": limpiar_descripcion(row["descripcion"]),
+                    "descripcion": row["descripcion"],
                     "lineas": json.loads(row["lineas_json"] or "[]"),
                     "presentacion": row["presentacion"] or "",
                     "costos_por_linea": json.loads(row["costos_por_linea_json"] or "{}"),
