@@ -7,6 +7,13 @@ function formatoCosto(valor) {
     return dineroCostos.format(Number(valor || 0)).replace(".00", "");
 }
 
+function limpiarDescripcionCosto(valor) {
+    return String(valor ?? "")
+        .replace(/\$/g, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+}
+
 function escCosto(valor) {
     const div = document.createElement("div");
     div.textContent = String(valor ?? "");
@@ -47,7 +54,7 @@ function cardCosto(p) {
     return '<article class="costoCard">' +
         '<div class="costoCab"><div><div class="costoCodigo">' + escCosto(p.codigo) +
         ' <span class="costoBase">Base ' + escCosto(p.codigo_base) + '</span></div>' +
-        '<h2>' + escCosto(p.descripcion) + '</h2>' +
+        '<h2>' + escCosto(limpiarDescripcionCosto(p.descripcion)) + '</h2>' +
         '<p class="costoMeta">' + lineas + presentacion + '</p></div>' +
         '<span class="costoBadge">SAYER</span></div>' +
         '<div class="costosBloques">' +
