@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cotización</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 2cm;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            line-height: 1.4;
+        }
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #0d4c92;
+        }
+        .logo-empresa {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-empresa img {
+            height: 60px;
+            width: auto;
+        }
+        .info-empresa h1 {
+            font-size: 24px;
+            color: #0d4c92;
+            margin-bottom: 5px;
+        }
+        .info-empresa p {
+            font-size: 14px;
+            color: #666;
+        }
+        .fecha {
+            text-align: right;
+            font-size: 14px;
+            color: #666;
+        }
+        .fecha strong {
+            display: block;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        thead {
+            background-color: #0d4c92;
+            color: white;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        td {
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .cantidad, .precio, .importe {
+            text-align: right;
+        }
+        .total-final {
+            text-align: right;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .total-final .label {
+            font-size: 16px;
+            color: #666;
+        }
+        .total-final .monto {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0d4c92;
+        }
+        .nota {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            font-size: 13px;
+            color: #856404;
+        }
+        .sin-logo .logo-empresa,
+        .sin-logo .info-empresa {
+            display: none;
+        }
+        .sin-logo .encabezado {
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body class="{{ 'sin-logo' if not mostrar_logo else '' }}">
+    <div class="encabezado">
+        <div class="logo-empresa">
+            {% if mostrar_logo %}
+            <img src="file://{{ ruta_logo }}" alt="Logo">
+            {% endif %}
+            <div class="info-empresa">
+                {% if mostrar_logo %}
+                <h1>SERBI Pinturas y Recubrimientos</h1>
+                <p>Calidad y servicio en pinturas</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="fecha">
+            <strong>Fecha de cotización</strong>
+            {{ fecha }}
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th class="cantidad">Cantidad</th>
+                <th class="precio">Precio unitario</th>
+                <th class="importe">Importe</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in productos %}
+            <tr>
+                <td>{{ item.descripcion }}</td>
+                <td class="cantidad">{{ item.cantidad }}</td>
+                <td class="precio">${{ "%.2f"|format(item.precio) }}</td>
+                <td class="importe">${{ "%.2f"|format(item.precio * item.cantidad) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-final">
+        <span class="label">TOTAL: </span>
+        <span class="monto">${{ "%.2f"|format(total) }}</span>
+    </div>
+
+    <div class="nota">
+        <strong>Nota:</strong> Precios netos. Esta cotización es válida por 7 días.
+    </div>
+</body>
+</html>

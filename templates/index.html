@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>SERBI STOCK</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <img src="/static/img/logo.png" class="logo">
+
+    <h2>Consulta de Productos</h2>
+
+    <form method="GET">
+
+        <input
+            type="text"
+            name="buscar"
+            placeholder="Buscar por clave o descripción..."
+            value="{{ texto }}">
+
+        <button type="submit">
+            Buscar
+        </button>
+
+    </form>
+
+    <div class="tabla">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Clave</th>
+                <th>Descripción</th>
+                <th>Costo</th>
+                <th>Precio 1</th>
+                <th>Precio 2</th>
+                <th>Precio 3</th>
+                <th>Agregar</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for producto in productos %}
+
+            <tr>
+
+                <td>
+
+                    {{ producto["CLAVE"] }}
+
+                    <br><br>
+
+                    <button
+                        class="copiar"
+                        onclick="copiar('{{ producto['CLAVE'] }}')">
+
+                        Copiar
+
+                    </button>
+
+                </td>
+
+                <td>
+
+                    {{ producto["DESCRIPCION"] }}
+
+                </td>
+
+                <td>
+
+                    ${{ producto["PRECIO COMPRA"] }}
+
+                </td>
+
+                <td>
+
+                    ${{ producto["PRECIO 1"] }}
+
+                    <br><br>
+
+                    <button
+                        class="copiar"
+                        onclick="copiar('{{ producto['PRECIO 1'] }}')">
+
+                        Copiar
+
+                    </button>
+
+                </td>
+
+                <td>
+
+                    ${{ producto["PRECIO 2"] }}
+
+                </td>
+
+                <td>
+
+                    ${{ producto["PRECIO 3"] }}
+
+                </td>
+
+                <td>
+
+<button
+class="agregar"
+onclick="agregarProducto(
+'{{ producto["CLAVE"] }}',
+'{{ producto["DESCRIPCION"] }}',
+{{ producto["PRECIO 1"] }},
+{{ producto["PRECIO 2"] }},
+{{ producto["PRECIO 3"] }}
+)">
+
+➕
+
+</button>
+
+</td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+function copiar(texto){
+
+    navigator.clipboard.writeText(texto);
+
+    alert("Copiado: " + texto);
+
+}
+
+</script>
+
+<hr>
+
+<h2>🛒 Cotización</h2>
+
+<label>
+
+<input type="radio" name="precio" value="1" checked>
+
+Precio 1
+
+</label>
+
+<label>
+
+<input type="radio" name="precio" value="2">
+
+Precio 2
+
+</label>
+
+<label>
+
+<input type="radio" name="precio" value="3">
+
+Precio 3
+
+</label>
+
+<br><br>
+
+<div id="cotizacion">
+
+No hay productos
+
+</div>
+
+<h2 id="total">
+
+TOTAL: $0
+
+</h2>
+
+<button onclick="vaciarCarrito()">
+
+🗑 Vaciar
+
+</button>
+<script>
+
+function copiar(texto){
+
+    navigator.clipboard.writeText(texto);
+
+    alert("Copiado: " + texto);
+
+}
+
+</script>
+
+<script src="/static/js/app.js"></script>
+
+</body>
+
+</html>

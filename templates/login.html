@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d4c92">
+    <title>Acceso | Cotizador SERBI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="loginBody">
+    <main class="loginCard">
+        <img src="/static/img/logo.png" class="loginLogo" alt="SERBI Pinturas y Recubrimientos">
+        <p class="loginMarca">SERBI PINTURAS Y RECUBRIMIENTOS</p>
+        <h1>Cotizador</h1>
+        <p class="loginAyuda">Ingresa el PIN de acceso para continuar.</p>
+        {% if error %}<p class="loginError" role="alert">{{ error }}</p>{% endif %}
+        <form method="post" action="/login">
+            <label for="pin">PIN de acceso</label>
+            <input id="pin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" required autofocus>
+            <button type="submit">Entrar</button>
+        </form>
+    </main>
+</body>
+</html>

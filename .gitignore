@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# Google Drive credentials
+token_drive.json
+client_secret_*.json
+
+# SICAR backups and local Drive test data
+*.sr
+data/drive_prueba/
+
+# Local test scripts
+probar_*.py
