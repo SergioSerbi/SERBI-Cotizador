@@ -20,7 +20,7 @@ def normalizar_texto(valor: str) -> str:
 
 
 def limpiar_descripcion(valor: str) -> str:
-    return re.sub(r"\\s+", " ", str(valor or "").replace("$", "")).strip()
+    return re.sub(r"\s+", " ", str(valor or "").replace("$", "")).strip()
 
 
 def compacto(valor: str) -> str:
