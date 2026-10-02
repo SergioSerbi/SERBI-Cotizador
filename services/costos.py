@@ -19,6 +19,10 @@ def normalizar_texto(valor: str) -> str:
     return re.sub(r"[^\w]+", " ", texto).strip()
 
 
+def limpiar_descripcion(valor: str) -> str:
+    return re.sub(r"\\s+", " ", str(valor or "").replace("$", "")).strip()
+
+
 def compacto(valor: str) -> str:
     return re.sub(r"[^a-z0-9]", "", normalizar_texto(valor))
 
@@ -118,14 +122,14 @@ def cargar_productos() -> list[dict]:
                     "id": row["id"],
                     "codigo": row["codigo"],
                     "codigo_base": row["codigo_base"],
-                    "descripcion": row["descripcion"],
+                    "descripcion": limpiar_descripcion(row["descripcion"]),
                     "lineas": json.loads(row["lineas_json"] or "[]"),
                     "presentacion": row["presentacion"] or "",
                     "costos_por_linea": json.loads(row["costos_por_linea_json"] or "{}"),
                     "publico_por_linea": json.loads(row["publico_por_linea_json"] or "{}"),
                     "fuentes_costos": json.loads(row["fuentes_costos_json"] or "[]"),
                     "fuentes_publico": json.loads(row["fuentes_publico_json"] or "[]"),
-                    "fecha_lista_display": row["fecha_lista_display"] or "",
+                    "fecha_lista_display": "JUNIO 26",
                     "paquete": row["paquete"] or "",
                     "search_text": row["search_text"] or "",
                     "search_compact": row["search_compact"] or "",
