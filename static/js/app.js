@@ -25,9 +25,12 @@ function configurarEventos() {
     $("#fondoCarrito").addEventListener("click", cerrarCarrito);
     $("#btnCopiar").addEventListener("click", copiarCotizacion);
     $("#btnWhatsapp").addEventListener("click", enviarWhatsApp);
+<<<<<<< HEAD
     $("#btnPDF").addEventListener("click", abrirModalPDF);
     $("#cancelarPDF").addEventListener("click", () => cerrarModal("#modalPDF"));
     $("#confirmarPDF").addEventListener("click", generarPDF);
+=======
+>>>>>>> 5cbb2d1740753c42b9f9692fbb1408f98e8956f3
     $("#btnVaciar").addEventListener("click", pedirVaciado);
     $("#confirmarVaciado").addEventListener("click", vaciarCarrito);
     $("#cancelarVaciado").addEventListener("click", () => cerrarModal("#modalConfirmacion"));
@@ -171,6 +174,7 @@ function limpiarBusqueda() { busquedaActual++; $("#buscar").value = ""; $("#limp
 function textoCotizacion() { let total = 0; const lineas = carrito.map((p) => { const importe = p.precio * p.cantidad; total += importe; return `${p.descripcion}\n${p.cantidad} × ${formatoMoneda(p.precio)} = ${formatoMoneda(importe)}`; }); return `COTIZACIÓN SERBI PINTURAS\n\n${lineas.join("\n\n")}\n\nTOTAL: ${formatoMoneda(total)}\nPrecios netos`; }
 async function copiarCotizacion() { if (!carrito.length) return mostrarToast("Agrega productos antes de copiar.", true); try { await navigator.clipboard.writeText(textoCotizacion()); mostrarToast("Cotización copiada al portapapeles."); } catch (_) { mostrarToast("No fue posible copiar la cotización.", true); } }
 function enviarWhatsApp() { if (!carrito.length) return mostrarToast("Agrega productos antes de enviarla.", true); window.open(`https://wa.me/?text=${encodeURIComponent(textoCotizacion())}`, "_blank", "noopener,noreferrer"); }
+<<<<<<< HEAD
 function abrirModalPDF() { if (!carrito.length) return mostrarToast("Agrega productos antes de exportar.", true); abrirModalBase("#modalPDF", "#modalPDF .modalContenido"); }
 async function generarPDF() {
     const mostrarLogo = document.querySelector('input[name="mostrarLogo"]:checked')?.value === "true";
@@ -200,4 +204,6 @@ async function generarPDF() {
         boton.textContent = "Generar PDF";
     }
 }
+=======
+>>>>>>> 5cbb2d1740753c42b9f9692fbb1408f98e8956f3
 function mostrarToast(mensaje, esError = false) { const toast = $("#toast"); toast.textContent = mensaje; toast.classList.toggle("error", esError); toast.hidden = false; requestAnimationFrame(() => toast.classList.add("visible")); clearTimeout(mostrarToast.id); mostrarToast.id = setTimeout(() => { toast.classList.remove("visible"); setTimeout(() => { toast.hidden = true; }, 180); }, 3000); }

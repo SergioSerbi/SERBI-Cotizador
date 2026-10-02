@@ -22,4 +22,7 @@ typing-inspection==0.4.2
 typing_extensions==4.16.0
 tzdata==2026.3
 uvicorn==0.51.0
+<<<<<<< HEAD
 weasyprint==62.3
+=======
+>>>>>>> 5cbb2d1740753c42b9f9692fbb1408f98e8956f3

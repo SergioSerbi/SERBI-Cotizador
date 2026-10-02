@@ -10,6 +10,7 @@ import threading
 import time
 
 from fastapi import FastAPI, Request, Form
+<<<<<<< HEAD
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -17,6 +18,11 @@ from pydantic import BaseModel
 from typing import List
 import tempfile
 import os
+=======
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+>>>>>>> 5cbb2d1740753c42b9f9692fbb1408f98e8956f3
 
 from services.buscador import buscar
 from services.costos import buscar_costos, resumen_costos
@@ -217,6 +223,7 @@ def cotizador_v3(request: Request):
 @app.get("/buscar")
 def buscar_ajax(texto: str = ""):
     return JSONResponse(content=productos_para(texto))
+<<<<<<< HEAD
 
 
 class ItemCotizacion(BaseModel):
@@ -256,3 +263,5 @@ def exportar_pdf(request: Request, datos: ExportarPDFRequest):
             filename=f"cotizacion_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
             background=None,
         )
+=======
+>>>>>>> 5cbb2d1740753c42b9f9692fbb1408f98e8956f3
